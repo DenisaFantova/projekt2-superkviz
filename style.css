@@ -55,6 +55,7 @@ h1 {
 
 #otazka {
 	margin: 20px 0 30px 0;
+	font-family: 'Bangers', cursive;
 	font-size: 36px;
 	line-height: 1.2;
 	text-align: center;
@@ -67,7 +68,7 @@ h1 {
 }
 
 .foto {
-	width: 250px;
+	max-width: 250px;
 	margin-right: 30px;
 }
 
