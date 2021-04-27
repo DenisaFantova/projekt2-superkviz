@@ -16,12 +16,14 @@ spravnaOdpoved: 0 }
 
 // globální proměnné
 const h1 = document.querySelector('h1');
+let bod = 0;
 let aktualniOtazka = 0;
 let cisloOtazky = 1;
 let otazkyZKvizu = [];
 let odpovediZKvizu = [];  
 let dataOdpovediZKvizu = [];
 let spravneOdpovedi = [];   // pole pro uložení správných odpovědí k porovnání s odpovědí zadané uživatelem
+let spravneOdpovediText = [];
 
     function polozenaOtazka(){
       
@@ -52,7 +54,8 @@ let spravneOdpovedi = [];   // pole pro uložení správných odpovědí k porov
             otazkyZKvizu.push(otazky[aktualniOtazka].otazka);   // vložení aktuální otázky do pole s otázkami z kvízu
             // console.log(otazkyZKvizu);   // test
             spravneOdpovedi.push(otazky[aktualniOtazka].spravnaOdpoved);   // vložení správné odpovědi do pole k ověření // vkládá zatím jen číslo odpovědi... pro kontrolu jestli se pole zobrazuje
-            // console.log(spravneOdpovedi);   // test
+            console.log(spravneOdpovedi);   // test
+           
 
             // vytvořit div se třídou obsah
             // který bude vnořený do divu se třídou kviz
@@ -161,9 +164,10 @@ let spravneOdpovedi = [];   // pole pro uložení správných odpovědí k porov
         let vysledekKvizu = document.createElement('h2');
         vysledekKvizu.id = 'vysledek-kvizu';
         vysledek.append(vysledekKvizu);
-        vysledekKvizu.innerHTML = "Správně \ x ze " + otazky.length + '\ otázek. \ Úspěšnost \ x \ %.';
+        // vložení obsahu následuje až po vyhodnocení správných odpovědí
 
         for (i=0;i<otazkyZKvizu.length;i++) {
+            let cisloOtazky = i + 1;
             let otazka = document.createElement('h3');
             let odpoved = document.createElement('p');
             let spravnaOdpoved = document.createElement('p');
@@ -171,28 +175,37 @@ let spravneOdpovedi = [];   // pole pro uložení správných odpovědí k porov
             hodnoceni.appendChild(otazka);
             vysledekKvizu.insertAdjacentElement('beforebegin', otazka);
 
-            otazka.innerHTML = otazkyZKvizu[i];
+            otazka.innerHTML = cisloOtazky + '. ' + otazkyZKvizu[i];
             otazka.appendChild(odpoved);
             otazka.insertAdjacentElement('afterend', odpoved);
 
-            odpoved.innerHTML = 'Tvoje odpověď: ' + odpovediZKvizu[i];
+            odpoved.innerHTML = '<em>Tvoje odpověď: </em>' + odpovediZKvizu[i];
             odpoved.appendChild(spravnaOdpoved);
             odpoved.insertAdjacentElement('afterend', spravnaOdpoved);
 
-            spravnaOdpoved.innerHTML = 'To je ' + jeOdpovedSpravna();
-            //spravneOdpovedi[i];       
-
+            spravnaOdpoved.innerHTML = '<em>To je</em> ' + jeOdpovedSpravna() + '. ';
+            
         } // konec cyklu, který vkládá odpovědi do HTML
 
-    }// konec funkce vytvorDivVysledek
+        vysledekKvizu.innerHTML = 'Správně ' + bod + ' ze ' + otazky.length + ' otázek. Úspěšnost ' + uspesnost() + ' %.';
+    
+}// konec funkce vytvorDivVysledek
+
+
 
 function jeOdpovedSpravna () {
+    
     if (dataOdpovediZKvizu[i] == spravneOdpovedi[i]) {
-        return 'SPRÁVNĚ';
+        bod++;
+        return '<b>SPRÁVNĚ</b>';
+        
     } else {
-        return 'ŠPATNĚ';    }
+        return 'ŠPATNĚ. Správná odpověď je: '; 
+     }
+}
 
-
+function uspesnost () {
+    return (bod / otazkyZKvizu.length * 100).toFixed(0);
 }
 
 
