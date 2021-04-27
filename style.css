@@ -67,14 +67,10 @@ h1 {
 	align-items: center;
 }
 
-.foto {
-	max-width: 250px;
-	margin-right: 30px;
-}
-
 #obrazek {
 	padding: 5px;
-	width: 100%;
+	margin-right: 30px;
+	width: 40%;
 	height: auto;
 	border-radius: 50%;
 	border: 3px dotted var(--cervena);
