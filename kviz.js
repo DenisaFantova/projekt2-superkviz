@@ -1,18 +1,25 @@
 // vytvoření pole otázek
+
 const otazky = [
-{ otazka: 'Co je ikonická hračka z 80. let?',
+    { otazka: 'Co je ikonická hračka z 80. let?',
+    foto: 'obrazky/moncicak.jpg',
+    odpovedi: ['Kočičák', 'Mončičák', 'Opičák'],
+    spravnaOdpoved: 1 },
+    { otazka: 'Jaké je matějovo nejoblíbenější ovoce?',
+    foto: 'obrazky/ovoce.jpg',
+    odpovedi: ['Kokos', 'Melounek', 'Jahoda', 'Ani jedna z možností'],
+    spravnaOdpoved: 2 },
+    { otazka: 'Pro úspěšné absolvování kurzu je potřeba...',
+    foto: 'obrazky/pivo.jpg',
+    odpovedi: ['Umět JavaScript', 'Chodit po kurzu do hospody'],
+    spravnaOdpoved: 0 }
+    ]; 
+
+// test, jestli je kvíz univerzální na větší počet otázek
+otazky.push({ otazka: 'Testovací otázka, jestli funguje přidání otázky',
 foto: 'obrazky/moncicak.jpg',
-odpovedi: {odpoved0: 'Kočičák', odpoved1: 'Mončičák', odpoved2: 'Opičák'},
-spravnaOdpoved: 1 },
-{ otazka: 'Jaké je matějovo nejoblíbenější ovoce?',
-foto: 'obrazky/ovoce.jpg',
-odpovedi: {odpoved0: 'Kokos', odpoved1: 'Melounek', odpoved2: 'Jahoda', odpoved3: 'Ani jedna z možností'},
-spravnaOdpoved: 2 },
-{ otazka: 'Pro úspěšné absolvování kurzu je potřeba...',
-foto: 'obrazky/pivo.jpg',
-odpovedi: {odpoved0: 'Umět JavaScript', odpoved1: 'Chodit po kurzu do hospody'},
-spravnaOdpoved: 0 }
-]; 
+odpovedi: ['funguje', 'nefunguje', 'těžko říct'],
+spravnaOdpoved: 0 });
 
 // globální proměnné
 const h1 = document.querySelector('h1');
@@ -22,8 +29,9 @@ let cisloOtazky = 1;
 let otazkyZKvizu = [];
 let odpovediZKvizu = [];  
 let dataOdpovediZKvizu = [];
-let spravneOdpovedi = [];   // pole pro uložení správných odpovědí k porovnání s odpovědí zadané uživatelem
+let spravneOdpovediIndex = [];   // pole pro uložení správných odpovědí k porovnání s odpovědí zadané uživatelem
 let spravneOdpovediText = [];
+let aktualniSpravnaOdpoved = [];
 
     function polozenaOtazka(){
       
@@ -53,9 +61,14 @@ let spravneOdpovediText = [];
             otazka.innerHTML = otazky[aktualniOtazka].otazka;   // vložení aktální otázky do HTML
             otazkyZKvizu.push(otazky[aktualniOtazka].otazka);   // vložení aktuální otázky do pole s otázkami z kvízu
             // console.log(otazkyZKvizu);   // test
-            spravneOdpovedi.push(otazky[aktualniOtazka].spravnaOdpoved);   // vložení správné odpovědi do pole k ověření // vkládá zatím jen číslo odpovědi... pro kontrolu jestli se pole zobrazuje
-            console.log(spravneOdpovedi);   // test
-           
+            spravneOdpovediIndex.push(otazky[aktualniOtazka].spravnaOdpoved);   // vložení správné odpovědi do pole k ověření // vkládá zatím jen číslo odpovědi... pro kontrolu jestli se pole zobrazuje
+            console.log(spravneOdpovediIndex);   // test
+            let aktualniSpravnaOdpovedIndex = otazky[aktualniOtazka].spravnaOdpoved;
+            console.log(aktualniSpravnaOdpovedIndex);
+            let aktualniSpravnaOdpovedText = otazky[aktualniOtazka].odpovedi[aktualniSpravnaOdpovedIndex];
+            console.log(aktualniSpravnaOdpovedText);
+            spravneOdpovediText.push(aktualniSpravnaOdpovedText);
+            console.log(spravneOdpovediText);
 
             // vytvořit div se třídou obsah
             // který bude vnořený do divu se třídou kviz
@@ -138,8 +151,15 @@ let spravneOdpovediText = [];
 
     function ulozOdpoved() {
         let vybranaOdpoved = document.querySelector('.vybrana-odpoved').textContent;
+        // let vybranaOdpoved = document.target.textContent; // zkusit předělat na target
+        
         odpovediZKvizu.push(vybranaOdpoved);
+        
+        
         let dataOdpoved = parseInt(document.querySelector('.vybrana-odpoved').dataset.odpoved);
+        // let dataOdpoved = parseInt(document.target.dataset.odpoved); // zkusit předělat na target
+        
+        
         dataOdpovediZKvizu.push(dataOdpoved);
 
         console.log(vybranaOdpoved);
@@ -193,18 +213,18 @@ let spravneOdpovediText = [];
 
 
 
-function jeOdpovedSpravna () {
+function jeOdpovedSpravna() {
     
-    if (dataOdpovediZKvizu[i] == spravneOdpovedi[i]) {
+    if (dataOdpovediZKvizu[i] == spravneOdpovediIndex[i]) {
         bod++;
         return '<b>SPRÁVNĚ</b>';
         
     } else {
-        return 'ŠPATNĚ. Správná odpověď je: '; 
+        return 'ŠPATNĚ. Správná odpověď je: ' + '<b>' + spravneOdpovediText[i] + '</b>'; 
      }
 }
 
-function uspesnost () {
+function uspesnost() {
     return (bod / otazkyZKvizu.length * 100).toFixed(0);
 }
 
