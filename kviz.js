@@ -4,22 +4,23 @@ const otazky = [
     { otazka: 'Co je ikonická hračka z 80. let?',
     foto: 'obrazky/moncicak.jpg',
     odpovedi: ['Kočičák', 'Mončičák', 'Opičák'],
-    spravnaOdpoved: 1 },
+    spravnaOdpoved: 1, alt: 'mončičák'},
     { otazka: 'Jaké je matějovo nejoblíbenější ovoce?',
     foto: 'obrazky/ovoce.jpg',
     odpovedi: ['Kokos', 'Melounek', 'Jahoda', 'Ani jedna z možností'],
-    spravnaOdpoved: 2 },
+    spravnaOdpoved: 2, alt: 'ovoce' },
     { otazka: 'Pro úspěšné absolvování kurzu je potřeba...',
     foto: 'obrazky/pivo.jpg',
     odpovedi: ['Umět JavaScript', 'Chodit po kurzu do hospody'],
-    spravnaOdpoved: 0 }
+    spravnaOdpoved: 0, alt: 'pivo' }
     ]; 
 
 // test, jestli je kvíz univerzální na větší počet otázek
-otazky.push({ otazka: 'Testovací otázka, jestli funguje přidání otázky',
-foto: 'obrazky/moncicak.jpg',
-odpovedi: ['funguje', 'nefunguje', 'těžko říct'],
-spravnaOdpoved: 0 });
+otazky.push({ otazka: 'Testovací otázka,jestli funguje přidání otázky do pole',
+foto: 'obrazky/otaznik.jpg',
+odpovedi: ['Funguje', 'Nefunguje', 'Těžko říct'],
+spravnaOdpoved: 0,
+alt: 'otaznik' });
 
 // globální proměnné
 const h1 = document.querySelector('h1');
@@ -29,7 +30,7 @@ let cisloOtazky = 1;
 let otazkyZKvizu = [];
 let odpovediZKvizu = [];  
 let dataOdpovediZKvizu = [];
-let spravneOdpovediIndex = [];   // pole pro uložení správných odpovědí k porovnání s odpovědí zadané uživatelem
+let spravneOdpovediIndex = [];
 let spravneOdpovediText = [];
 let aktualniSpravnaOdpoved = [];
 
@@ -40,76 +41,72 @@ let aktualniSpravnaOdpoved = [];
         } 
         
         if (cisloOtazky <= otazky.length) {
-            // console.log(aktualniOtazka); //test
-                
+
+            // vytvořit div s class="kviz"
+            // vyložení divu do HTML      
             const kviz = document.createElement('div');
             kviz.className = 'kviz';
             h1.insertAdjacentElement("afterend", kviz);
 
-            // vytvořit div s id poradi
-            // pořadí otázek 1/3 - 3/3
-            // vložit do HTML do divu s id kviz
+            // vytvořit div s id="poradi"
+            // pořadí otázek 1/x - x/x
+            // vložit do HTML do divu s id="kviz"
             const poradi = document.createElement('p');
             poradi.id = 'poradi';
             kviz.appendChild(poradi);
             poradi.innerHTML = 'OTÁZKA' + ' ' + cisloOtazky + '/' + otazky.length;
 
-            // vytvořit div s id otazka - vložit pod div s id poradi
+            // vytvořit div s id="otazka" 
+            // vložit do HTML pod div s id="poradi"
             const otazka = document.createElement('p');
             otazka.id = 'otazka';
             kviz.appendChild(otazka);
-            otazka.innerHTML = otazky[aktualniOtazka].otazka;   // vložení aktální otázky do HTML
-            otazkyZKvizu.push(otazky[aktualniOtazka].otazka);   // vložení aktuální otázky do pole s otázkami z kvízu
-            // console.log(otazkyZKvizu);   // test
-            spravneOdpovediIndex.push(otazky[aktualniOtazka].spravnaOdpoved);   // vložení správné odpovědi do pole k ověření // vkládá zatím jen číslo odpovědi... pro kontrolu jestli se pole zobrazuje
-            console.log(spravneOdpovediIndex);   // test
-            let aktualniSpravnaOdpovedIndex = otazky[aktualniOtazka].spravnaOdpoved;
-            console.log(aktualniSpravnaOdpovedIndex);
-            let aktualniSpravnaOdpovedText = otazky[aktualniOtazka].odpovedi[aktualniSpravnaOdpovedIndex];
-            console.log(aktualniSpravnaOdpovedText);
-            spravneOdpovediText.push(aktualniSpravnaOdpovedText);
-            console.log(spravneOdpovediText);
-
-            // vytvořit div se třídou obsah
-            // který bude vnořený do divu se třídou kviz
-            // vložit do HTML
+            otazka.innerHTML = otazky[aktualniOtazka].otazka;   // vložení otázky do HTML
+            otazkyZKvizu.push(otazky[aktualniOtazka].otazka);   // uložení do pole se všemi položenými otázkami
+            spravneOdpovediIndex.push(otazky[aktualniOtazka].spravnaOdpoved);  // uložení indexu správné odpovědi do pole (k následnému porovnání) - zdroj: pole objektů
+            let aktualniSpravnaOdpovedIndex = otazky[aktualniOtazka].spravnaOdpoved;  // zjištění indexu správné odpovědi    
+            let aktualniSpravnaOdpovedText = otazky[aktualniOtazka].odpovedi[aktualniSpravnaOdpovedIndex];  // využití tohoto indexu pro zjištění textu správné odpovědi
+            spravneOdpovediText.push(aktualniSpravnaOdpovedText);   // vložení totoho textu správné odpovědi do pole
+            
+            // vytvořit div s class="obsah"
+            // vložit do HTML - vnořit do div s class="kviz"
             const obsah = document.createElement('div');
             obsah.className = 'obsah';
             kviz.appendChild(obsah);
 
             // vytvořit img
-            // vložení do divu obsah
-            // vložit do HTML
+            // vložit do HTML  vložení do divu obsah
             const foto = document.createElement('img');
             foto.id = 'obrazek';
             foto.src = otazky[aktualniOtazka].foto;
-            foto.alt = 'mončičák';
+            foto.alt = otazky[aktualniOtazka].alt;
             obsah.appendChild(foto);
 
-            // vytvořit div s id moznosti
+            // vytvořit div s id="moznosti"
             // vytvořit ul
-            // li vložit do ul s atributem data-odpoved="0" - "2"
-            // vložit do HTML
+            // vložit do HTML - li vložit do ul s atributem data-odpoved="0" - "x"
             const moznosti = document.createElement('div');
             moznosti.id = 'moznosti';
 
             const odpovedi = document.createElement('ul');
             odpovedi.id = 'odpovedi';
 
-            let celePoleOdpovedi = otazky[aktualniOtazka].odpovedi; 
-            // console.log(celePoleOdpovedi);   // test
+            let celePoleOdpovedi = otazky[aktualniOtazka].odpovedi;         // naplnění pole možných odpovědí ke konkrétní otázce
             let delkaPoleOdpovedi = Object.keys(celePoleOdpovedi).length;   // zjištění počtu možných odpovědí ke konkrétní otázce
-            // console.log(delkaPoleOdpovedi);  // test
-
+           
             for (i=0;i<delkaPoleOdpovedi;i++) {             // vytvoření potřebného počtu li pro vložení možných odpovědí
                 let li = document.createElement('li');
                 obsah.appendChild(moznosti);
                 moznosti.appendChild(odpovedi);
                 odpovedi.appendChild(li);
                 li.setAttribute('data-odpoved', i);
-                li.addEventListener('click', function() {li.className = 'vybrana-odpoved';});   // při kliku přidání třídy na vybranou odpověď pro zjištění data-odpoved
-                li.addEventListener('click', ulozOdpoved);        // při kliku volání funkce ulozOdpoved - měla by uložit text odpovědi
-                li.addEventListener('click', dalsiOtazka);        // při kliku volání funkce pro zobrazení další otázky  
+                li.addEventListener('click', (odpoved) => {
+                    let vybranaOdpoved = odpoved.target.textContent;    // zachycení textu vybrané odpovědi
+                    odpovediZKvizu.push(vybranaOdpoved);                // vložení této odpovědi do pole
+                    let dataOdpoved = parseInt(odpoved.target.dataset.odpoved); // zachycení data odpovědi vybrané odpovědi
+                    dataOdpovediZKvizu.push(dataOdpoved);                       // vložení tohoto data do pole
+                });
+                li.addEventListener('click', dalsiOtazka);        // při kliku zavolá funkci pro zobrazení další otázky  
                 
             } //konec cyklu, který tvoří seznam odpovědí      
                 
@@ -119,17 +116,12 @@ let aktualniSpravnaOdpoved = [];
                     for (i=0;i<delkaPoleOdpovedi;i++) {
                         let x = Object.values(otazky[aktualniOtazka].odpovedi)[i];
                         let y = document.querySelectorAll('li')[i].innerHTML = x;
-                    // console.log(x);   // test
-                        
                     }
             } // konec funkce vypisMozneOdpovedi()
 
-        
-            // console.log(aktualniOtazka); // test
             aktualniOtazka++;
             cisloOtazky++;
-            // console.log(aktualniOtazka); // test
-
+            
         } // konec podmínky, která se vykonává, dokud kvíz pokračuje (následuje další otázka)
    
     } // konec funkce polozenaOtazka()
@@ -149,48 +141,36 @@ let aktualniSpravnaOdpoved = [];
         kviz.remove();
     }
 
-    function ulozOdpoved() {
-        let vybranaOdpoved = document.querySelector('.vybrana-odpoved').textContent;
-        // let vybranaOdpoved = document.target.textContent; // zkusit předělat na target
-        
-        odpovediZKvizu.push(vybranaOdpoved);
-        
-        
-        let dataOdpoved = parseInt(document.querySelector('.vybrana-odpoved').dataset.odpoved);
-        // let dataOdpoved = parseInt(document.target.dataset.odpoved); // zkusit předělat na target
-        
-        
-        dataOdpovediZKvizu.push(dataOdpoved);
-
-        console.log(vybranaOdpoved);
-        console.log(odpovediZKvizu);
-        console.log(dataOdpoved); 
-        console.log(dataOdpovediZKvizu);
-    }
-
+    // funkce na vytvoření div s class="vysledek"
     let vysledek = document.createElement('div');
 
     function vytvorDivVysledek() {
 
+        // vložit do HTML - div s class="vysledek"
+        // zviditelnit tento div
         vysledek.className = 'vysledek';
         h1.insertAdjacentElement("afterend", vysledek);
         vysledek.style.display = 'block';
 
+        // vložit do HTML - div s id="hodnoceni"
         let hodnoceni = document.createElement('h2');
         hodnoceni.id = 'hodnoceni';
         hodnoceni.innerHTML = 'Tvoje hodnocení';
         vysledek.appendChild(hodnoceni);
 
+        // vytvořit div s id="vysledek-kvizu" - otázky a odpovědi se budou řadit nad tento div
         let vysledekKvizu = document.createElement('h2');
         vysledekKvizu.id = 'vysledek-kvizu';
         vysledek.append(vysledekKvizu);
-        // vložení obsahu následuje až po vyhodnocení správných odpovědí
+        // vložení obsahu do divu následuje až po vyhodnocení správných odpovědí
 
-        for (i=0;i<otazkyZKvizu.length;i++) {
-            let cisloOtazky = i + 1;
-            let otazka = document.createElement('h3');
-            let odpoved = document.createElement('p');
-            let spravnaOdpoved = document.createElement('p');
+
+        // vložit do HTML otázky, odpovědi a informaci, zda odpověď byla správna (pokud ne, zobrazit správnou odpověď)
+        for (i=0;i<otazkyZKvizu.length;i++) {   // prochází celé pole, kde jsou uložené všechny položené otázky
+            let cisloOtazky = i + 1;            // zaznamenává pořadí otázky
+            let otazka = document.createElement('h3');     // vytvoření elementu h3 pro vypsání otázky do HTML
+            let odpoved = document.createElement('p');      // vytvoření elementu p pro vypsání vybrané odpovědi
+            let spravnaOdpoved = document.createElement('p');   // vytvoření elementu p pro vyhodnocení správné/špatné odpovědi, případně vypsání správné odpovědi
                         
             hodnoceni.appendChild(otazka);
             vysledekKvizu.insertAdjacentElement('beforebegin', otazka);
@@ -207,6 +187,7 @@ let aktualniSpravnaOdpoved = [];
             
         } // konec cyklu, který vkládá odpovědi do HTML
 
+        // vložení výsledku kvízu - kolik otázek z kolika bylo správně a úspěšnost v procentech (v celých procentech)
         vysledekKvizu.innerHTML = 'Správně ' + bod + ' ze ' + otazky.length + ' otázek. Úspěšnost ' + uspesnost() + ' %.';
     
 }// konec funkce vytvorDivVysledek
@@ -214,18 +195,20 @@ let aktualniSpravnaOdpoved = [];
 
 
 function jeOdpovedSpravna() {
-    
-    if (dataOdpovediZKvizu[i] == spravneOdpovediIndex[i]) {
-        bod++;
-        return '<b>SPRÁVNĚ</b>';
+
+    if (dataOdpovediZKvizu[i] == spravneOdpovediIndex[i]) {     // porovnání jestli je odpověď správná
+        // pokud je odpověď správná    
+        bod++;      // přičtu bod          
+        return '<b>SPRÁVNĚ</b>';  // zobrazím ve vyhodnocení kvízu, že byla odpověď správná 
         
     } else {
-        return 'ŠPATNĚ. Správná odpověď je: ' + '<b>' + spravneOdpovediText[i] + '</b>'; 
+        // pokud je odpověď špatná    
+        return 'ŠPATNĚ. Správná odpověď je: ' + '<b>' + spravneOdpovediText[i] + '</b>';    // zobrazím ve vyhodnocení kvízu, že byla odpověď špatná a správnou odpověď
      }
 }
 
 function uspesnost() {
-    return (bod / otazkyZKvizu.length * 100).toFixed(0);
+    return Math.round(bod / otazkyZKvizu.length * 100);    // vrací hodnotu úspěšnosti v procentech (zaokrouhleno na celé číslo)
 }
 
 
